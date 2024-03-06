@@ -62,7 +62,7 @@ namespace Tutorials.Firefighters
                 var nextRow = row + 1;
 
                 float increase = 0;
-
+                //8 neighbors around our cell
                 increase += Index(row, nextCol, heatRO, numColumns, numRows);
                 increase += Index(row, prevCol, heatRO, numColumns, numRows);
 
@@ -76,13 +76,14 @@ namespace Tutorials.Firefighters
 
                 increase *= speed;
 
+                //cap heat
                 heatRW[index] = new Heat
                 {
                     Value = math.min(1, heatRO[index].Value + increase)
                 };
             }
         }
-
+        //neight check or edge case
         private static float Index(int row, int col, NativeArray<Heat> heatRO, int numColumns, int numRows)
         {
             if (col < 0 || col >= numColumns ||
@@ -232,6 +233,7 @@ namespace Tutorials.Firefighters
 
         private void GroundCellUpdate_MainThread(ref SystemState state, DynamicBuffer<Heat> heatBuffer, Config config)
         {
+            //index for the heat buffer
             int idx = 0;
             var minY = -(config.GroundCellYScale / 2);
             var maxY = minY + config.GroundCellYScale;
@@ -244,6 +246,8 @@ namespace Tutorials.Firefighters
                 var heat = heatBuffer[idx].Value;
 
                 // oscillate the displayed heat so that the fire looks a little more organic
+                //sin function with elapsed very similar to ping pongy
+                //use index value as the seed to generate a unique random float value here
                 {
                     var radians = Random.CreateFromIndex((uint)idx).NextFloat(math.PI * 2) + elapsedTime;
                     var oscillationOffset =
